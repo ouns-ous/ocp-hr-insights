@@ -14,16 +14,298 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      applications: {
+        Row: {
+          applicant_email: string
+          applicant_name: string
+          applicant_phone: string | null
+          cover_letter: string | null
+          created_at: string
+          id: string
+          job_id: string
+          resume_url: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          applicant_email: string
+          applicant_name: string
+          applicant_phone?: string | null
+          cover_letter?: string | null
+          created_at?: string
+          id?: string
+          job_id: string
+          resume_url?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          applicant_email?: string
+          applicant_name?: string
+          applicant_phone?: string | null
+          cover_letter?: string | null
+          created_at?: string
+          id?: string
+          job_id?: string
+          resume_url?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "applications_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "job_postings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employees: {
+        Row: {
+          created_at: string
+          department: string
+          email: string
+          full_name: string
+          hire_date: string
+          id: string
+          phone: string | null
+          position: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          department: string
+          email: string
+          full_name: string
+          hire_date?: string
+          id?: string
+          phone?: string | null
+          position: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          department?: string
+          email?: string
+          full_name?: string
+          hire_date?: string
+          id?: string
+          phone?: string | null
+          position?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      job_postings: {
+        Row: {
+          created_at: string
+          department: string
+          description: string
+          employment_type: string
+          id: string
+          location: string
+          posted_by: string
+          requirements: string | null
+          salary_range: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          department: string
+          description: string
+          employment_type: string
+          id?: string
+          location: string
+          posted_by: string
+          requirements?: string | null
+          salary_range?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          department?: string
+          description?: string
+          employment_type?: string
+          id?: string
+          location?: string
+          posted_by?: string
+          requirements?: string | null
+          salary_range?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      leave_requests: {
+        Row: {
+          created_at: string
+          days: number
+          employee_name: string
+          end_date: string
+          id: string
+          leave_type: string
+          reason: string | null
+          start_date: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          days: number
+          employee_name: string
+          end_date: string
+          id?: string
+          leave_type: string
+          reason?: string | null
+          start_date: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          days?: number
+          employee_name?: string
+          end_date?: string
+          id?: string
+          leave_type?: string
+          reason?: string | null
+          start_date?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          message: string
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message: string
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message?: string
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      payroll: {
+        Row: {
+          base_salary: number
+          bonuses: number | null
+          created_at: string
+          deductions: number | null
+          employee_id: string
+          id: string
+          month: number
+          net_salary: number
+          payment_date: string | null
+          status: string
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          base_salary: number
+          bonuses?: number | null
+          created_at?: string
+          deductions?: number | null
+          employee_id: string
+          id?: string
+          month: number
+          net_salary: number
+          payment_date?: string | null
+          status?: string
+          updated_at?: string
+          year: number
+        }
+        Update: {
+          base_salary?: number
+          bonuses?: number | null
+          created_at?: string
+          deductions?: number | null
+          employee_id?: string
+          id?: string
+          month?: number
+          net_salary?: number
+          payment_date?: string | null
+          status?: string
+          updated_at?: string
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payroll_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "hr_manager" | "employee"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +432,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "hr_manager", "employee"],
+    },
   },
 } as const
