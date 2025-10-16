@@ -114,7 +114,7 @@ const Employees = () => {
     <div className="p-8 space-y-6">
       <div className="flex items-center justify-between">
         <div><h1 className="text-3xl font-bold">Gestion des Employés</h1><p className="text-muted-foreground mt-1">{employees.length} employé{employees.length > 1 ? "s" : ""}</p></div>
-        {canManageEmployees && <Button onClick={() => setIsAddDialogOpen(true)} className="gap-2"><Plus className="w-4 h-4" />Nouvel employé</Button>}
+        <Button onClick={() => canManageEmployees ? setIsAddDialogOpen(true) : toast.error("Vous n'avez pas les permissions")} className="gap-2"><Plus className="w-4 h-4" />Ajouter un employé</Button>
       </div>
       <div className="relative"><Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" /><Input placeholder="Rechercher..." className="pl-10" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} /></div>
       <div className="border rounded-lg">
