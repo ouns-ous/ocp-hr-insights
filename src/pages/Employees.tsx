@@ -51,7 +51,17 @@ const Employees = () => {
     try {
       const { data, error } = await (supabase as any).from("employees").select("*").order("created_at", { ascending: false });
       if (error) throw error;
-      setEmployees(data || []);
+      const mappedData = (data || []).map((emp: any) => ({
+        id: emp.id,
+        name: emp.full_name,
+        email: emp.email,
+        phone: emp.phone,
+        position: emp.position,
+        department: emp.department,
+        location: emp.location,
+        status: 'active'
+      }));
+      setEmployees(mappedData);
     } catch (error: any) {
       toast.error("Erreur lors du chargement");
     } finally {
@@ -60,14 +70,22 @@ const Employees = () => {
   };
 
   const filteredEmployees = employees.filter((e) =>
-    e.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    e.position.toLowerCase().includes(searchTerm.toLowerCase())
+    (e.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (e.position || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (e.department || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleAdd = async () => {
     try {
       const validated = employeeSchema.parse(formData);
-      const { error } = await (supabase as any).from("employees").insert([{ ...validated, phone: validated.phone || null, location: validated.location || null, status: "active" }]);
+      const { error } = await (supabase as any).from("employees").insert([{ 
+        full_name: validated.name,
+        email: validated.email,
+        phone: validated.phone || null, 
+        position: validated.position,
+        department: validated.department,
+        location: validated.location || null
+      }]);
       if (error) throw error;
       toast.success("Employé ajouté");
       setIsAddDialogOpen(false);
@@ -83,7 +101,14 @@ const Employees = () => {
     if (!editingEmployee) return;
     try {
       const validated = employeeSchema.parse(formData);
-      const { error } = await (supabase as any).from("employees").update({ ...validated, phone: validated.phone || null, location: validated.location || null }).eq("id", editingEmployee.id);
+      const { error } = await (supabase as any).from("employees").update({ 
+        full_name: validated.name,
+        email: validated.email,
+        phone: validated.phone || null, 
+        position: validated.position,
+        department: validated.department,
+        location: validated.location || null
+      }).eq("id", editingEmployee.id);
       if (error) throw error;
       toast.success("Modifié");
       setIsEditDialogOpen(false);
