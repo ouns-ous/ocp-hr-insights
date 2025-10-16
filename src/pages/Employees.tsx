@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { Search, Plus, Mail, Phone, MapPin, Edit, Trash2, Eye } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Search, Plus, Edit, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -117,27 +117,76 @@ const Employees = () => {
         {canManageEmployees && <Button onClick={() => setIsAddDialogOpen(true)} className="gap-2"><Plus className="w-4 h-4" />Nouvel employé</Button>}
       </div>
       <div className="relative"><Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" /><Input placeholder="Rechercher..." className="pl-10" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} /></div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredEmployees.map((emp) => (
-          <Card key={emp.id}><CardContent className="p-6">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center"><span className="text-primary font-semibold text-lg">{emp.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)}</span></div>
-                <div><h3 className="font-semibold">{emp.name}</h3><p className="text-sm text-muted-foreground">{emp.position}</p></div>
-              </div>
-              <Badge className="bg-green-500/10 text-green-700">Actif</Badge>
-            </div>
-            <div className="space-y-2 mb-4">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground"><Mail className="w-4 h-4" /><span className="truncate">{emp.email}</span></div>
-              {emp.phone && <div className="flex items-center gap-2 text-sm text-muted-foreground"><Phone className="w-4 h-4" /><span>{emp.phone}</span></div>}
-              {emp.location && <div className="flex items-center gap-2 text-sm text-muted-foreground"><MapPin className="w-4 h-4" /><span>{emp.location}</span></div>}
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="flex-1 gap-2" onClick={() => toast.info("À venir")}><Eye className="w-4 h-4" />Voir</Button>
-              {canManageEmployees && (<><Button variant="outline" size="sm" onClick={() => { setEditingEmployee(emp); setFormData({ name: emp.name, email: emp.email, phone: emp.phone || "", position: emp.position, department: emp.department, location: emp.location || "" }); setIsEditDialogOpen(true); }}><Edit className="w-4 h-4" /></Button><Button variant="outline" size="sm" onClick={() => handleDelete(emp.id)} className="text-destructive"><Trash2 className="w-4 h-4" /></Button></>)}
-            </div>
-          </CardContent></Card>
-        ))}
+      <div className="border rounded-lg">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Nom</TableHead>
+              <TableHead>Poste</TableHead>
+              <TableHead>Département</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Téléphone</TableHead>
+              <TableHead>Statut</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredEmployees.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                  Aucun employé trouvé
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredEmployees.map((emp) => (
+                <TableRow key={emp.id}>
+                  <TableCell className="font-medium">{emp.name}</TableCell>
+                  <TableCell>{emp.position}</TableCell>
+                  <TableCell>{emp.department}</TableCell>
+                  <TableCell>{emp.email}</TableCell>
+                  <TableCell>{emp.phone || "-"}</TableCell>
+                  <TableCell>
+                    <Badge className="bg-green-500/10 text-green-700">Actif</Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      {canManageEmployees && (
+                        <>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setEditingEmployee(emp);
+                              setFormData({
+                                name: emp.name,
+                                email: emp.email,
+                                phone: emp.phone || "",
+                                position: emp.position,
+                                department: emp.department,
+                                location: emp.location || "",
+                              });
+                              setIsEditDialogOpen(true);
+                            }}
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDelete(emp.id)}
+                            className="text-destructive"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
       </div>
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}><DialogContent className="sm:max-w-[500px]"><DialogHeader><DialogTitle>Ajouter un employé</DialogTitle></DialogHeader><div className="grid gap-4 py-4">
         <div className="grid gap-2"><Label>Nom *</Label><Input value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} maxLength={100} /></div>
